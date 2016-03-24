@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
  * Created by liyanan on 16/3/22.
  */
 public class DecimalDigitsInputFilter implements InputFilter {
-    Pattern startPattern;
     Pattern filterPattern;
 
     /**
@@ -25,21 +24,22 @@ public class DecimalDigitsInputFilter implements InputFilter {
      * @param digitsAfterZero
      */
     public DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
-        startPattern = Pattern.compile("^[1-9]");
-        filterPattern = Pattern.compile("^\\d{1," + digitsBeforeZero + "}(\\.\\d{0," + digitsAfterZero + "})?$");
+        String pattern;
+        if (digitsBeforeZero > 1) {
+            pattern = "^[1-9]{1}\\d{0," + (digitsBeforeZero - 1) + "}(\\.\\d{0," + digitsAfterZero + "})?$";
+        } else if (digitsBeforeZero == 1) {
+            pattern = "^[1-9]{1}(\\.\\d{0," + digitsAfterZero + "})?$";
+        } else {
+            pattern = "^[0]{1}(\\.\\d{0," + digitsAfterZero + "})?$";
+        }
+        filterPattern = Pattern.compile(pattern);
     }
 
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dStart, int dEnd) {
         String checkString = TextUtils.concat(dest.subSequence(0, dStart), source.subSequence(start, end),
                 dest.subSequence(dEnd, dest.length())).toString();
-        Matcher matcher;
-        if (checkString.length() == 1) {
-            //验证第一位不可为0
-            matcher = startPattern.matcher(checkString);
-        } else {
-            matcher = filterPattern.matcher(checkString);
-        }
+        Matcher matcher = filterPattern.matcher(checkString);
         if (!matcher.matches())
             return "";
         return null;
