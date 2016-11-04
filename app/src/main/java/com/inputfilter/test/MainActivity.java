@@ -3,6 +3,7 @@ package com.inputfilter.test;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,5 +21,6 @@ public class MainActivity extends AppCompatActivity {
         et_chinese.setFilters(new InputFilter[]{new ChineseInputFilter()});
         et_english = (EditText) findViewById(R.id.et_english);
         et_english.setFilters(new InputFilter[]{new EnglishInputFilter()});
+        Log.d("lyn","测试1");
     }
 }
